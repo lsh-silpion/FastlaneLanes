@@ -50,22 +50,6 @@ desc " * **`skip_ios`**: Whether to skip the ios build [default: false]. (`G_BUI
 desc " * **`skip_macos`**: Whether to skip the macos build [default: false]. (`G_BUILD_MAC_SKIP`)"
 desc ""
 lane :carthage_resolve_dependencies do |options|
-  if !options[:skip_ios].nil?
-    skip_ios = options[:skip_ios]
-  elsif !ENV["G_BUILD_IOS_SKIP"].nil?
-    skip_ios = true?(ENV["G_BUILD_IOS_SKIP"])
-  else
-    skip_ios = false
-  end
-
-  if !options[:skip_macos].nil?
-    skip_macos = options[:skip_macos]
-  elsif !ENV["G_BUILD_MAC_SKIP"].nil?
-    skip_macos = true?(ENV["G_BUILD_MAC_SKIP"])
-  else
-    skip_macos = false
-  end
-
   if options[:configuration]
     configuration = options[:configuration]
   elsif ENV["G_BUILD_CONFIGURATION"]
@@ -84,20 +68,11 @@ lane :carthage_resolve_dependencies do |options|
     executable: carthage_mint, 
     command: "build", 
     use_binaries: false, 
-    platform: "iOS",
+    platform: "Mac,iOS",
     use_xcframeworks: true,
     cache_builds: true, 
     configuration: configuration
-  ) unless skip_ios
-  carthage(
-    executable: carthage_mint, 
-    command: "build", 
-    use_binaries: false, 
-    platform: "Mac",
-    use_xcframeworks: true, 
-    cache_builds: true, 
-    configuration: configuration
-  ) unless skip_macos
+  )
 end
 
 desc "Lane that resolves the project dependencies using Swift Package manager."
